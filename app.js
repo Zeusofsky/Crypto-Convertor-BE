@@ -33,6 +33,8 @@ app.get("/api/all-cryptos", async (req, res) => {
     res.status(500).json({ message: "Error fetching all cryptocurrencies" });
   }
 });
+
+// Endpoint to fetch all fiat currencies
 app.get("/api/all-fiats", async (req, res) => {
   try {
     const { data } = await axios.get(`${baseUrl}/v1/fiat/map`, {
@@ -51,20 +53,28 @@ app.get("/api/all-fiats", async (req, res) => {
     res.status(500).json({ message: "Error fetching all cryptocurrencies" });
   }
 });
+
+
 // Existing endpoint to get cryptocurrency data by symbol
 app.get("/api/price", async (req, res) => {
   try {
-    const response = await axios.get(`${baseUrl}/v2/cryptocurrency/quotes/latest`, {
-      headers: {
-        "X-CMC_PRO_API_KEY": CMC_API_KEY,
-      },
-      params: {
-        symbol: req.query.symbol,
-        convert: req.query.convert || "USD",
-      },
-    });
+    const response = await axios.get(
+      `${baseUrl}/v2/cryptocurrency/quotes/latest`,
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": CMC_API_KEY,
+        },
+        params: {
+          symbol: req.query.symbol,
+          convert: req.query.convert || "USD",
+        },
+      }
+    );
+    const Symbol = req.query.symbol;
+    const Convert = req.query.convert || "USD";
+    const result = response.data.data[Symbol][0].quote[Convert].price;
+    console.log(result * req.query.amount);
     res.json(response.data);
-    console.log(response.data); // Response containing top 100 cryptocurrencies
   } catch (error) {
     console.error("Error fetching data from CoinMarketCap:", error);
   }
