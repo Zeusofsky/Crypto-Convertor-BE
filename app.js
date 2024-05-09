@@ -17,9 +17,14 @@ app.get("/", (req, res) => {
 // Endpoint to fetch all cryptocurrencies
 app.get("/api/all-cryptos", async (req, res) => {
   try {
-    const { data } = await axios.get(`${baseUrl}/v1/cryptocurrency/map`, {
+    const { data } = await axios.get(`${baseUrl}/v1/cryptocurrency/listings/latest`, {
       headers: {
         "X-CMC_PRO_API_KEY": CMC_API_KEY,
+      },
+      params: {
+        start: 1,
+        limit: 100,
+        convert: "USD",
       },
     });
     let allCryptos = [];
@@ -74,7 +79,7 @@ app.get("/api/price", async (req, res) => {
     const Convert = req.query.convert || "USD";
     const result = response.data.data[Symbol][0].quote[Convert].price;
     console.log(result * req.query.amount);
-    res.json(response.data);
+    res.json(result * req.query.amount);
   } catch (error) {
     console.error("Error fetching data from CoinMarketCap:", error);
   }
@@ -119,6 +124,8 @@ app.get("/api/convert", async (req, res) => {
       .json({ message: "Conversion failed", error: error.response.data });
   }
 });
+
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
