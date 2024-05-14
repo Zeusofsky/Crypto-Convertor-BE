@@ -14,7 +14,7 @@ exports.getAllCryptos = async (req, res) => {
           limit: 100,
           convert: "USD",
         },
-      }
+      } 
     );
     let allCryptos = [];
     for (let i = 0; i < data.data.length; i++) {
